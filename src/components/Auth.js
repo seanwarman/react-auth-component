@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const styles = {
+export const styles = {
   height: '100%',
   width: '100%',
   display: 'flex',
@@ -8,37 +8,35 @@ const styles = {
   alignItems: 'center'
 }
 
-const Unauthenticated = ({
-  login,
-  setToken,
-  browserToken,
+export const Unauthenticated = ({
+  loginAndSetToken
 }) => {
   return <div
     style={styles}
   >
     Not logged in!
     <button
-      onClick={loginAndSetToken({setToken, login, browserToken})}
+      onClick={loginAndSetToken}
     >Login</button>
   </div>
 }
 
-const Loading = () => {
+export const Loading = () => {
   return <div style={styles}>
     <div>Loading...</div>
   </div>
 }
 
-function setBrowserToken(browserToken, token) {
+export function setBrowserToken(browserToken, token) {
   if(browserToken) window.localStorage.setItem(browserToken, token)
 }
 
-function getBrowserToken(browserToken) {
+export function getBrowserToken(browserToken) {
   if(browserToken) return window.localStorage.getItem(browserToken)
   return null
 }
 
-function loginAndSetToken({
+export function loginAndSetToken({
   login,
   setToken,
   browserToken
@@ -57,7 +55,7 @@ function loginAndSetToken({
   }
 }
 
-async function checkAuthAndSetState({
+export async function checkAuthAndSetState({
   setLoading,
   setAuthenticated,
   checkAuth,
@@ -118,10 +116,11 @@ export default function Auth({
     )
     :
     <Unauthenticated 
-      login={login}
-      setToken={setToken}
-      browserToken={browserToken}
-    />
+      loginAndSetToken={loginAndSetToken({
+        login,
+        setToken,
+        browserToken
+    })}></Unauthenticated>
 
   )
 }
