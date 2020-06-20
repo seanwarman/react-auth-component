@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const styles = {
   height: '100%',
@@ -8,10 +8,19 @@ const styles = {
   alignItems: 'center'
 }
 
-const Unauthenticated = () => {
+const Unauthenticated = ({
+  login,
+  setToken,
+  browserToken,
+}) => {
   return <div
     style={styles}
-  >Not logged in!</div>
+  >
+    Not logged in!
+    <button
+      onClick={loginAndSetToken({setToken, login, browserToken})}
+    >Login</button>
+  </div>
 }
 
 const Loading = () => {
@@ -20,32 +29,100 @@ const Loading = () => {
   </div>
 }
 
-export default class Auth extends PureComponent {
-  state = {
-    user: null,
-    loading: true,
-    authenticated: false
+function setBrowserToken(browserToken, token) {
+  if(browserToken) window.localStorage.setItem(browserToken, token)
+}
+
+function getBrowserToken(browserToken) {
+  if(browserToken) return window.localStorage.getItem(browserToken)
+  return null
+}
+
+function loginAndSetToken({
+  login,
+  setToken,
+  browserToken
+}) {
+
+  return async function() {
+    const token = await login()
+
+    if(typeof token !== 'string') {
+      setBrowserToken(browserToken, null)
+      setToken(null)
+    }
+
+    setBrowserToken(browserToken, token)
+    setToken(token)
+  }
+}
+
+async function checkAuthAndSetState({
+  setLoading,
+  setAuthenticated,
+  checkAuth,
+  token
+}) {
+
+  if(await checkAuth(token)) {
+    setAuthenticated(true)
+  } else {
+    setAuthenticated(false)
   }
 
+  setLoading(false)
+}
 
-  render() {
-    return (
+export default function Auth({
+  checkAuth,
+  children,
+  renderUnauthenticated,
+  renderLoading,
+  login,
+  browserToken
+}) {
 
-      this.state.loading && this.props.loading ?
-      this.props.loading()
-      :
-      this.state.loading && !this.props.loading ?
-      <Loading />
-      :
-      this.state.authenticated ?
-      this.props.children
-      :
-      this.props.unauthenticated ?
-      this.props.unauthenticated()
-      :
-      <Unauthenticated />
+  const [loadingState, setLoading] = useState(true)
+  const [authenticatedState, setAuthenticated] = useState(false)
+  const [token, setToken] = useState(getBrowserToken(browserToken))
 
+  useEffect(() => {
+
+    checkAuthAndSetState({
+      setLoading,
+      setAuthenticated,
+      checkAuth,
+      token
+    })
+
+  }, [token])
+
+  return (
+
+    loadingState && renderLoading ?
+    renderLoading()
+    :
+    loadingState && !renderLoading ?
+    <Loading />
+    :
+    authenticatedState ?
+    children
+    :
+    renderUnauthenticated ?
+    renderUnauthenticated(
+      loginAndSetToken({
+        login, 
+        setToken, 
+        browserToken
+      })
     )
-  }
+    :
+    <Unauthenticated 
+      login={login}
+      setToken={setToken}
+      browserToken={browserToken}
+    />
+
+  )
 }
 
