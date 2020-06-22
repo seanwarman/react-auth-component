@@ -1,11 +1,14 @@
 import { get, post } from '../lib/api.js'
 
 // login should return a token otherwise return null or undefined
-export async function handleLogin() {
+export async function handleLogin({
+  username,
+  password
+}) {
 
   const res = await post('/login', {
-    username: 'jeff1967',
-    password: 'hotdog'
+    username,
+    password,
   })
 
   if(res instanceof Error || !res?.data?.token) return null

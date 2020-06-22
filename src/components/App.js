@@ -1,16 +1,19 @@
 import React from 'react'
 import Auth from './Auth.js'
+import Login from './Login.js'
+import Home from './Home.js'
 import { handleLogin, handleCheckAuth } from '../actions/App.js'
 import './App.css'
 
 const App = () => (
 
   <Auth
-    browserToken="nice"
+    tokenLabel="nice"
     login={handleLogin}
     checkAuth={handleCheckAuth}
+    renderUnauthenticated={login => <Login login={login} />}
   >
-    <div>I'm logged in!</div>
+    <Home />
   </Auth>
 
 )
