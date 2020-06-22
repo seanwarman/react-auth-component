@@ -75,16 +75,18 @@ export default function Login({
             <div>{messages.password}</div>
         }
       </div>
-      <button
-        onClick={() => handleLogin({
-          login,
-          username,
-          password,
-          setMessages
-        })}
-      >
-        Submit
-      </button>
+      <div style={{textAlign: 'right'}}>
+        <button
+          onClick={() => handleLogin({
+            login,
+            username,
+            password,
+            setMessages
+          })}
+        >
+          Submit
+        </button>
+      </div>
     </div>
   )
 }

@@ -7,14 +7,16 @@ import './App.css'
 
 const App = () => (
 
-  <Auth
-    tokenLabel="nice"
-    login={handleLogin}
-    checkAuth={handleCheckAuth}
-    renderUnauthenticated={login => <Login login={login} />}
-  >
-    <Home />
-  </Auth>
+  <div id="app">
+    <Auth
+      tokenLabel="nice"
+      login={handleLogin}
+      checkAuth={handleCheckAuth}
+      renderUnauthenticated={login => <Login login={login} />}
+    >
+      <Home />
+    </Auth>
+  </div>
 
 )
 
