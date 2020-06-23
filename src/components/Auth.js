@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
-const styles = {
-  height: '100%',
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center'
-}
-
-const Loading = () => {
-  return <div style={styles}>
+const Loading = ({ loadingStyles }) => {
+  return <div style={loadingStyles}>
     <div>Loading...</div>
   </div>
 }
@@ -55,6 +47,8 @@ function loginAndSetToken({
 
     setBrowserToken(tokenLabel, token)
     setToken(token)
+
+    return token
   }
 }
 
@@ -74,13 +68,27 @@ async function checkAuthAndSetState({
   setLoading(false)
 }
 
+function setLoadingStyles(
+  loadingStyles = {}
+) {
+  return {
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...loadingStyles
+  }
+}
+
 export default function Auth({
   checkAuth,
   children,
   renderUnauthenticated,
   renderLoading,
   login,
-  tokenLabel
+  tokenLabel,
+  loadingStyles
 }) {
 
   const [loadingState, setLoading] = useState(true)
@@ -104,7 +112,7 @@ export default function Auth({
     renderLoading()
     :
     loadingState && !renderLoading ?
-    <Loading />
+    <Loading styles={setLoadingStyles(loadingStyles)} />
     :
     authenticatedState ?
     React.Children.map(children, child => 
