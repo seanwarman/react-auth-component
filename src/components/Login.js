@@ -39,8 +39,8 @@ export default function Login({
   login,
 }) {
 
-  const [ username, setUsername ] = useState('jeff1967')
-  const [ password, setPassword ] = useState('hotdog')
+  const [ username, setUsername ] = useState('')
+  const [ password, setPassword ] = useState('')
   const [ messages, setMessages ] = useState({
     username: undefined,
     password: undefined,
