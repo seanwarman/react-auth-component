@@ -1,39 +1,51 @@
 import React, { useEffect, useState } from 'react'
 
-const Loading = ({ loadingStyles }) => {
+export const Loading = ({ loadingStyles }) => {
   return <div style={loadingStyles}>
     <div>Loading...</div>
   </div>
 }
 
-function setBrowserToken(tokenLabel, token) {
-  if(tokenLabel) window.localStorage.setItem(tokenLabel, token)
+function setLocalStore(tokenLabel, data) {
+  if(tokenLabel) window.localStorage.setItem(tokenLabel, JSON.stringify(data))
 }
 
-function getBrowserToken(tokenLabel) {
-  if(tokenLabel) return window.localStorage.getItem(tokenLabel)
-  return null
+export function getLocalStore(tokenLabel) {
+  if(!tokenLabel) return {}
+
+  let store
+
+  try {
+    store = JSON.parse(window.localStorage.getItem(tokenLabel))
+  } catch (err) {
+    return {}
+  }
+
+  if(!store) return {}
+
+  return store
 }
 
-function removeBrowserToken(tokenLabel) {
+function removeLocalStore(tokenLabel) {
   if(tokenLabel) window.localStorage.removeItem(tokenLabel)
 }
 
 function logout({
-  setToken,
+  setStore,
   setAuthenticated,
   tokenLabel
 }) {
   return function() {
-    removeBrowserToken(tokenLabel)
-    setToken(undefined)
+    removeLocalStore(tokenLabel)
+    setStore({})
     setAuthenticated(false)
   }
 }
 
-function loginAndSetToken({
+export function loginAndSetToken({
   login,
-  setToken,
+  setStore,
+  setUser,
   tokenLabel
 }) {
 
@@ -41,12 +53,14 @@ function loginAndSetToken({
     const token = await login(data)
 
     if(typeof token !== 'string') {
-      setBrowserToken(tokenLabel, null)
-      setToken(null)
+      removeLocalStore(tokenLabel)
+      setStore({})
     }
 
-    setBrowserToken(tokenLabel, token)
-    setToken(token)
+    // TODO: this needs to be abstracted, add a localStoreKeys prop to Auth
+    // so we can choose from there which params to save to 'store'
+    setLocalStore(tokenLabel, { token, username: data.username })
+    setStore({token, username: data.username})
 
     return token
   }
@@ -93,7 +107,7 @@ export default function Auth({
 
   const [loadingState, setLoading] = useState(true)
   const [authenticatedState, setAuthenticated] = useState(false)
-  const [token, setToken] = useState(getBrowserToken(tokenLabel))
+  const [store, setStore] = useState(getLocalStore(tokenLabel))
 
   useEffect(() => {
 
@@ -101,10 +115,10 @@ export default function Auth({
       setLoading,
       setAuthenticated,
       checkAuth,
-      token
+      token: store.token
     })
 
-  }, [token, checkAuth])
+  }, [store, checkAuth])
 
   return (
 
@@ -116,9 +130,9 @@ export default function Auth({
     :
     authenticatedState ?
     React.Children.map(children, child => 
-      React.cloneElement(child, { logout: logout({
+      React.cloneElement(child, { store, logout: logout({
         setAuthenticated,
-        setToken,
+        setStore,
         tokenLabel
       })})
     )
@@ -126,7 +140,7 @@ export default function Auth({
     renderUnauthenticated(
       loginAndSetToken({
         login, 
-        setToken, 
+        setStore, 
         tokenLabel
       })
     )

@@ -30,9 +30,26 @@ async function handleLogin({
     })
   }
 
-  return token
+}
 
+function onEnter({
+    login,
+    username,
+    password,
+    setMessages
+  }) {
 
+  return function(e) {
+
+    if (e.keyCode === 13) handleLogin({
+      login,
+      username,
+      password,
+      setMessages
+    })
+
+  }
+  
 }
 
 export default function Login({
@@ -48,31 +65,43 @@ export default function Login({
   })
 
   return (
-    <div>
+    <div id="login">
       {
         messages.general &&
-          <div>{messages.general}</div>
+          <div className="error">{messages.general}</div>
       }
       <div>
         <label>Username</label>
         <input 
+          onKeyUp={onEnter({
+            login,
+            username,
+            password,
+            setMessages
+          })}
           onChange={e => setUsername(e.target.value)}
           type="input"
         />
         {
           messages.username &&
-            <div>{messages.username}</div>
+            <div className="error">{messages.username}</div>
         }
       </div>
       <div>
         <label>Password</label>
-        <input 
+        <input
+          onKeyUp={onEnter({
+            login,
+            username,
+            password,
+            setMessages
+          })}
           onChange={e => setPassword(e.target.value)}
           type="password"
         />
         {
           messages.password &&
-            <div>{messages.password}</div>
+            <div className="error">{messages.password}</div>
         }
       </div>
       <div style={{textAlign: 'right'}}>

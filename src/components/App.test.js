@@ -13,22 +13,28 @@ const setup = (props = {}) => {
 
 }
 
-describe('App children: ', () => {
+describe('App', () => {
 
-  describe('Auth', () => {
-    it('should render', () => {
+  describe('children', () => {
 
-      const output = setup()
-      expect(output.type).toBe(Auth)
+    describe('Auth', () => {
+
+      it('should render the Auth component', () => {
+
+        const output = setup().props.children
+        expect(output.type).toBe(Auth)
+
+      })
+
+      it('should have the Login component on it\'s renderUnauthenticated prop', () => {
+
+        const output = setup().props.children
+        expect(output.props.renderUnauthenticated().type).toBe(Login)
+
+      })
 
     })
 
-    it('should have the Login component on it\'s renderUnauthenticated prop', () => {
-
-      const output = setup()
-      expect(output.props.renderUnauthenticated().type).toBe(Login)
-
-    })
   })
 
 })

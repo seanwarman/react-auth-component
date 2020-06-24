@@ -1,7 +1,7 @@
 import React from 'react'
 import { createRenderer } from 'react-test-renderer/shallow'
 import Auth, { 
-  getBrowserToken, 
+  getLocalStore, 
   Loading, 
   loginAndSetToken ,
 } from './Auth.js'
@@ -29,8 +29,8 @@ describe('Auth functions', () => {
 
   describe('getBrowserToken', () => {
 
-    it('should return null if no params present', () => {
-      expect(getBrowserToken()).toBe(null)
+    it('should return an object if no params present', () => {
+      expect(typeof getLocalStore()).toBe('object')
     })
 
   })

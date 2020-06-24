@@ -4,3 +4,10 @@
   align-items: center;
   justify-content: center;
 }
+
+#login .error {
+  color: #ee798a;
+  font-size: .9em;
+  margin-bottom: 12px;
+  max-width: 170px;
+}
